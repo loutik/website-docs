@@ -1,0 +1,53 @@
+---
+title: "Mise en place du serveur DHCP sous Debian"
+description: "Compte-rendu d'intervention et rapport technique sur : Mise en place du serveur DHCP sous Debian."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+Le but de cette intervention est de déployer et de configurer un service DHCP centralisé sous environnement Linux (Debian) pour l'infrastructure MilleNuits. La problématique principale consiste à automatiser l'attribution des configurations IP sur de multiples sous-réseaux isolés (VLANs), nécessitant la mise en œuvre conjointe du démon KEA DHCP et d'un agent relais sur l'équipement de routage Cisco.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Installation et sécurisation du service KEA :** 
+   Déploiement du paquet `kea-dhcp4-server`. Une sauvegarde préventive du fichier de configuration par défaut a été réalisée avant modification. Les droits d'accès (chown/chmod) ont été strictement restreints sur le répertoire et le fichier d'enregistrement des baux pour l'utilisateur de service dédié (`_kea`) afin de garantir la sécurité des données.
+
+2. **Configuration globale et déclaration des étendues :** 
+   Édition de la configuration au format JSON pour définir l'interface d'écoute, la durée des baux (valid-lifetime) et les paramètres réseau globaux (passerelle, serveurs DNS). La base de données des baux a été configurée en mode mémoire (memfile) avec persistance sur disque.
+
+3. **Configuration du routage et de l'agent relais :** 
+   Paramétrage de l'équipement Cisco pour intercepter les requêtes DHCP de diffusion (broadcast) sur les sous-interfaces des VLANs dépourvus de service DHCP local. Ces requêtes sont encapsulées en monodiffusion (unicast) vers l'adresse IP du serveur KEA central via la directive `ip helper-address`.
+
+4. **Validation de la syntaxe et activation :** 
+   Résolution d'un blocage de sécurité lié à AppArmor empêchant l'outil de validation syntaxique de lire la configuration. Après la désactivation du profil restrictif via un lien symbolique, la syntaxe JSON a été validée, puis le service KEA a été redémarré et activé au démarrage du système.
+
+5. **Tests d'intégration et recette :** 
+   Vérification de la stabilité du démon via les journaux système. Des requêtes DHCP initiées depuis des sous-réseaux distants ont confirmé le bon fonctionnement de l'agent relais Cisco (identification par l'adresse *giaddr*). L'attribution correcte des adresses IP et l'enregistrement effectif des adresses MAC dans le fichier CSV des baux ont été validés.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** 
+- Le service KEA DHCP est actif, stable et écoute sur les interfaces définies.
+- Les requêtes broadcast issues de VLANs distants sont correctement relayées par le routeur Cisco.
+- Les baux sont distribués de manière cohérente avec les options réseau (DNS, passerelle) et enregistrés avec succès dans la base de données persistante.
+:::
+
+Une difficulté technique est survenue lors de la validation syntaxique de la configuration (`kea-dhcp4 -t`) : le module de sécurité AppArmor interdisait l'accès en lecture au fichier JSON. Ce comportement a été résolu de manière procédurale en désactivant spécifiquement le profil AppArmor lié à KEA (`/etc/apparmor.d/usr.sbin.kea-dhcp4`), permettant ainsi de valider le fichier avant la mise en production.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Installation du daemon KEA DHCP sous Debian, configuration des étendues réseau au format JSON et paramétrage de l'agent relais (IP Helper) sur le routeur Cisco. |
+| **1.5 Mettre à disposition un service** | **Réaliser les tests d’intégration** | Exécution de la recette technique : vérification de l'état du service, tests d'attribution IP inter-VLAN via le relais et contrôle de l'écriture des baux. |
+| **1.1 Gérer le patrimoine informatique** | **Gérer des sauvegardes** | Création systématique d'une archive de sécurité (`.bak`) du fichier de configuration original avant toute modification des paramètres de production. |
+| **1.1 Gérer le patrimoine informatique** | **Mettre en place les habilitations** | Application du principe de moindre privilège via la modification des droits (`chmod 640`) et des propriétaires (`chown _kea:_kea`) sur le fichier sensible des baux DHCP. |

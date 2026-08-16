@@ -1,0 +1,100 @@
+---
+// test
+---
+
+<div class="custom-layout">
+  <section class="hero-section">
+    <h1 class="hero-title">
+      <span class="brand-dark">Loutik</span><span class="brand-orange">DOCS</span>
+    </h1>
+    <p class="hero-subtitle">DevOps, Administration système & Administration Réseau</p>
+    <a href="introduction/bienvenue" class="hero-button">Lire la documentation 🚀</a>
+  </section>
+
+  <section class="cards-section">
+    <div class="custom-card card-homelab">
+      <h2>🏗️ Homelab</h2>
+      <p>Documentation de mon homelab (décisions d'architecture, topologies réseau, stratégies de conception etc...)</p>
+      <a href="/homelab/" class="card-button">Accéder ➜</a>
+    </div>
+    
+    <div class="custom-card card-notions">
+      <h2>📚 Notions</h2>
+      <p>Base de connaissances théorique et pratique (LLM, conteneurisation, HTTP etc...)</p>
+      <a href="/notions/" class="card-button">Accéder ➜</a>
+    </div>
+    
+    <div class="custom-card card-projets">
+      <h2>📖 Projets BTS SIO</h2>
+      <p>Documentations des projets académiques (Millenuits, Imdeo).</p>
+      <a href="/projets-bts-sio" class="card-button">Accéder ➜</a>
+    </div>
+  </section>
+</div>
+
+<style>
+  .custom-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centre le contenu global */
+  }
+
+  /* Centrer le conteneur parent et prendre toute la largeur */
+  .hero-section {
+    background: linear-gradient(135deg, #e87b64 0%, #157984 100%);
+    padding: 6rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    
+    width: 100vw !important;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .brand-dark { color: #1c2b45; }
+  .brand-orange { color: #f78c6b; }
+  .hero-subtitle { color: white; font-size: 1.2rem; font-weight: 600; margin: 0; }
+  
+  .hero-button {
+    background-color: white; color: black; padding: 0.8rem 1.5rem;
+    border-radius: 8px; text-decoration: none; font-weight: 700; transition: transform 0.2s;
+  }
+  .hero-button:hover { transform: scale(1.05); }
+
+  .cards-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  .custom-card {
+    border-radius: 12px; padding: 2.5rem 1.5rem; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 1.5rem; color: black;
+    margin: 0 !important;
+  }
+  .custom-card h2 { font-size: 1.5rem; margin: 0; font-weight: 800; color: black; }
+  .custom-card p { margin: 0; flex-grow: 1; font-weight: 500; }
+  
+  .card-button {
+    background-color: white; color: black; padding: 0.6rem 1.2rem;
+    border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: background-color 0.2s;
+  }
+  .card-button:hover { background-color: #f0f0f0; }
+
+  .card-homelab { background-color: #cddffb; }
+  .card-notions { background-color: #fbe0cd; }
+  .card-projets { background-color: #fbcdef; }
+</style>

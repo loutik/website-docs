@@ -1,0 +1,46 @@
+---
+title: "Création du plan d'adressage"
+description: "Compte-rendu d'intervention et rapport technique sur : Plan d'adressage."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention pour l'infrastructure IMDEO était de concevoir une architecture réseau logique segmentée, sécurisée et évolutive. Le besoin initial consistait à isoler les différents flux métiers (Ressources Humaines, Direction, Comptabilité, Serveurs, etc.) pour limiter les domaines de diffusion et préparer la mise en place d'un routage inter-VLAN sécurisé. L'enjeu technique majeur était d'optimiser l'espace d'adressage IPv4 en utilisant la méthode VLSM (Variable Length Subnet Mask) afin d'attribuer à chaque service un bloc réseau correspondant exactement à son besoin en nombre d'hôtes, tout en évitant le gaspillage d'adresses.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, la conception du plan d'adressage a été découpée en plusieurs phases analytiques et logiques :
+
+<Steps>
+1. **Recensement des ressources et dimensionnement (VLSM) :** 
+   Analyse des besoins capacitifs pour chaque service de l'entreprise IMDEO (de 2 hôtes pour le lien FAI à 30 hôtes pour les salles de réunion). Le découpage logique a été réalisé sur la plage privée `192.168.1.0` en appliquant des masques de sous-réseaux à taille variable (allant du `/27` pour les grands services au `/30` pour l'interconnexion FAI), garantissant une allocation stricte et sans chevauchement.
+
+2. **Segmentation par VLAN et isolation des flux :** 
+   Attribution d'identifiants VLAN uniques (802.1Q) pour chaque département. Une démarcation claire a été établie entre les postes clients (VLANs 2, 3, 4, 5, 6, 9, situés dans les blocs `192.168.x.x`) et l'infrastructure d'hébergement. Les serveurs ont été isolés dans un VLAN dédié (VLAN 51) sur une classe d'adressage distincte (`172.16.51.0/24`), facilitant ainsi le futur filtrage applicatif (firewalling) et limitant la surface d'attaque.
+
+3. **Définition des limites de plages et des passerelles :** 
+   Pour chaque sous-réseau, calcul précis des adresses réseau, des adresses de diffusion (broadcast) et des plages d'adresses IP utilisables pour l'attribution statique ou DHCP. Par convention d'architecture, la dernière adresse IP disponible de chaque plage a été désignée comme passerelle par défaut (Gateway) pour les équipements du sous-réseau (ex: `192.168.1.30` pour le réseau COM).
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** L'architecture logique est validée et prête à être implémentée sur les équipements de niveau 2 et 3.
+* **Optimisation IPv4 :** Zéro chevauchement d'IP et économie de l'espace d'adressage grâce au découpage CIDR.
+* **Sécurité By-Design :** Séparation stricte des 8 domaines de diffusion (VLANs) facilitant l'application de règles de pare-feu (Zero Trust local).
+* **Documentation :** Matrice de routage et plages d'attribution standardisées pour les futures configurations DHCP et interfaces virtuelles (SVI).
+:::
+
+L'usage d'un réseau distinct (`192.168.2.0/27`) pour le service REUNION et d'une classe B (`172.16.51.0/24`) pour les SERVEURS permet d'anticiper une forte scalabilité et simplifiera la lecture des logs de sécurité lors des audits de trafic.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.1 Gérer le patrimoine informatique** | **Recenser et identifier les ressources** | Analyse des besoins en nombre d'hôtes pour chaque département d'IMDEO afin de préparer le découpage réseau. |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Application rigoureuse de la méthode VLSM (RFC 1812) et de la norme d'encapsulation 802.1Q (VLANs) pour la segmentation. |
+| **1.4 Travailler en mode projet** | **Analyser les objectifs** | Conception d'une matrice IP répondant directement à un besoin d'isolation de sécurité et de hiérarchisation des flux d'entreprise. |

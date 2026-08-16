@@ -1,0 +1,50 @@
+---
+title: "Mise en place du relais DHCP"
+description: "Compte-rendu d'intervention et rapport technique sur : Mise en place du relais DHCP."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention au sein de l'infrastructure IMDEO est de centraliser la gestion de l'adressage IP. Dans un réseau segmenté, les requêtes DHCP initiales des clients (émises en broadcast) sont bloquées par les limites des sous-réseaux. La mission consiste à implémenter un agent de relais (IP Helper) sur les équipements de niveau 3 (commutateurs L3 et routeurs) pour intercepter ces diffusions locales et les relayer en unicast vers un serveur DHCP distant, garantissant ainsi l'obtention d'une configuration réseau complète pour chaque poste isolé.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Préparation de l'environnement de routage :** 
+   Activation du routage global sur les commutateurs de niveau 3 pour autoriser la transmission des paquets inter-VLAN. L'accessibilité unicast vers le serveur DHCP cible a été préalablement vérifiée via des tests de connectivité ICMP.
+
+2. **Configuration du relais (IP Helper) sur les interfaces :** 
+   Déploiement de l'adresse IP du serveur DHCP distant directement sur les interfaces agissant comme passerelle pour les clients. Selon la topologie, cette configuration a été appliquée sur les interfaces virtuelles de VLAN (SVI) pour les commutateurs L3, ou sur les interfaces physiques/sous-interfaces pour les routeurs (architecture Router-on-a-Stick).
+
+3. **Validation de l'intégration (Recette) :** 
+   Vérification de la bonne prise en compte du paramètre relais sur chaque équipement réseau. Côté client, une demande manuelle de renouvellement de bail (`ipconfig /renew`) a été exécutée pour s'assurer que le poste obtient une adresse IP valide, son masque et sa passerelle via le serveur distant.
+
+4. **Vérification centralisée et sauvegarde :** 
+   Contrôle sur la console du serveur DHCP distant pour confirmer la présence du nouveau bail (association IP/MAC). Enfin, sauvegarde des configurations actives dans la NVRAM des équipements Cisco (`write`) pour figer l'implémentation.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** 
+* Le routage global est actif et le serveur DHCP distant est joignable depuis les équipements.
+* La fonctionnalité de relais DHCP est opérationnelle sur l'ensemble des interfaces ciblées.
+* Les postes clients acquièrent dynamiquement leur configuration réseau de manière transparente.
+* Les baux sont correctement centralisés et visibles sur le serveur DHCP de l'infrastructure.
+:::
+
+L'application systématique des procédures de recette, allant du test de l'équipement relais jusqu'à la vérification des baux côté serveur, a permis de garantir une mise en production sans perturbation pour le réseau local.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Paramétrage de la fonction de relais DHCP (IP Helper) sur les interfaces passerelles des routeurs et commutateurs L3. |
+| **1.5 Mettre à disposition un service** | **Réaliser les tests d’intégration** | Exécution d'un plan de recette complet : vérification des configurations d'interfaces, pings de validation et renouvellement forcé des baux clients. |
+| **1.1 Gérer le patrimoine informatique** | **Vérifier la continuité** | Sauvegarde des configurations courantes vers la mémoire non-volatile (NVRAM) pour garantir le maintien du service réseau après un éventuel redémarrage. |

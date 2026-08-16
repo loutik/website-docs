@@ -1,0 +1,48 @@
+---
+title: "Distribution automatique des vlans (VTP)"
+description: "Compte-rendu d'intervention et rapport technique sur : Distribution automatique des vlans (VTP)."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention au sein de l'infrastructure du réseau IMDEO était d'automatiser et de centraliser la gestion des VLANs. Afin de réduire la charge administrative et de prévenir les erreurs de configuration manuelle, le protocole VTP (VLAN Trunking Protocol) a été déployé. L'enjeu technique consistait à configurer un commutateur maître (serveur) capable de propager de manière dynamique et sécurisée sa base de données de VLANs vers les commutateurs périphériques (clients).
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Préparation et configuration du serveur VTP :** 
+   Le commutateur principal a été défini avec le rôle de serveur VTP. Le domaine d'administration ("IMDEO") et une clé d'authentification ont été configurés pour sécuriser la topologie. Les VLANs nécessaires à l'infrastructure ont été créés sur cet équipement central, et les ports d'interconnexion ont été paramétrés en mode agrégation (Trunk) pour autoriser la diffusion des trames.
+
+2. **Déploiement des clients VTP :** 
+   Les commutateurs secondaires ont été raccordés au serveur via des liens Trunk. Ils ont ensuite été configurés en mode "Client" et intégrés au domaine VTP en renseignant les mêmes paramètres de sécurité, ce qui leur a permis de synchroniser automatiquement leur base de données locale.
+
+3. **Sécurisation de la révision VTP :** 
+   Afin de prévenir tout écrasement accidentel de la base VLAN (dû à l'insertion d'un switch avec un numéro de révision supérieur), une procédure de réinitialisation a été documentée et validée. Elle consiste à basculer temporairement un équipement en mode "Transparent" ou à modifier son domaine pour forcer la remise à zéro de son compteur de révision.
+
+4. **Tests et validation (Recette) :** 
+   La bonne propagation réseau a été vérifiée en consultant l'état de synchronisation des clients. Un test d'injection a été réalisé en créant un réseau virtuel de test (VLAN 999) sur le serveur, confirmant sa redéscente instantanée sur l'ensemble de l'infrastructure.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** 
+- Le commutateur serveur centralise parfaitement la base VLAN.
+- Les liaisons Trunk acheminent correctement les trames de gestion.
+- Les commutateurs clients récupèrent dynamiquement l'intégralité des VLANs sans configuration manuelle locale.
+- Le réseau est protégé contre les anomalies de synchronisation grâce à la maîtrise des numéros de révision.
+:::
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Implémentation du protocole standard VTP (niveau 2 OSI) pour uniformiser l'architecture de commutation logicielle. |
+| **1.2 Répondre aux incidents / assistance** | **Traiter les demandes (réseau/système/applicatif)** | Anticipation et résolution d'incidents de révision VTP via une procédure de réinitialisation sécurisée (mode transparent). |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Configuration du rôle serveur VTP, paramétrage des trunks, et automatisation de la distribution des réseaux logiques vers les équipements clients. |

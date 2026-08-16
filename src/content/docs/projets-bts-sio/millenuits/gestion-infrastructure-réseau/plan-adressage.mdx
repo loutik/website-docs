@@ -1,0 +1,43 @@
+---
+title: "Création du plan d'adressage"
+description: "Compte-rendu d'intervention et rapport technique sur : Création du plan d'adressage."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention pour l'infrastructure de l'entreprise MILLENUITS était de concevoir un plan d'adressage IPv4 structuré, évolutif et sécurisé. Avant le déploiement physique ou logique des équipements, il était impératif de cartographier les besoins capacitaires de chaque service (Production, Administratif, Logistique, etc.) en anticipant la croissance du parc informatique. Le résultat attendu est un document de référence définissant le découpage réseau par VLAN, optimisant l'espace d'adressage et posant les bases du futur routage inter-VLAN.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Recueil et analyse des besoins capacitaires :** 
+   L'intervention a débuté par un audit des besoins en hôtes pour chaque département de l'entreprise. Afin de garantir la pérennité de l'infrastructure et d'éviter un redécoupage à court terme, une marge de sécurité de 20 % a été appliquée systématiquement sur le nombre d'hôtes requis par zone (ex: 110 hôtes réels en Production provisionnés pour 132).
+
+2. **Découpage de l'espace d'adressage (méthodologie VLSM) :** 
+   Pour optimiser l'utilisation des adresses IP et limiter les domaines de diffusion (broadcast), une logique de sous-réseaux à taille variable (VLSM) a été appliquée sur la plage réseau de base (172.40.x.x). Les masques CIDR ont été ajustés dynamiquement du `/24` au `/28` en fonction de la taille requise par chaque segment, allant des réseaux denses (Production) aux réseaux restreints (Management, Invité).
+
+3. **Attribution logique des VLANs et convention de nommage :** 
+   Chaque sous-réseau calculé a été strictement isolé dans un VLAN dédié (VLAN 10 à 99). Une règle d'architecture standardisée a été définie et documentée : la passerelle par défaut (Gateway) de chaque segment correspond systématiquement à la dernière adresse IP disponible du sous-réseau, facilitant ainsi la lisibilité et la maintenance future par les équipes d'administration.
+</Steps>
+
+## ✅ Bilan et Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** Le plan d'adressage est totalement finalisé, documenté et valide. L'espace IP est optimisé sans gaspillage, et la segmentation par VLAN garantit une isolation logique prête à être implémentée sur les équipements de niveau 2 et 3 (Switchs/Routeurs/Firewalls).
+:::
+
+La principale exigence technique reposait sur la rigueur du calcul binaire pour éviter tout chevauchement (overlap) entre les sous-réseaux, tout en respectant l'intégration des marges de croissance. L'utilisation d'une méthodologie mathématique stricte a permis de valider techniquement chaque plage allouée.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.1 Gérer le patrimoine informatique** | **Recenser et identifier les ressources** | Audit des besoins matériels par département pour MILLENUITS et calcul du nombre d'hôtes nécessaires avec intégration d'une marge d'évolution de 20 %. |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Application des standards d'adressage IPv4 et de la méthode de calcul VLSM pour définir les masques CIDR, les adresses de diffusion et segmenter logiquement le réseau via des VLANs. |
+| **1.4 Travailler en mode projet** | **Analyser les objectifs** | Traduction des besoins organisationnels de l'entreprise en contraintes techniques afin de produire une architecture réseau robuste et évolutive. |

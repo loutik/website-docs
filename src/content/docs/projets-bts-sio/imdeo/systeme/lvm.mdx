@@ -1,0 +1,49 @@
+---
+title: "Partitionnement de LVM sur Debian 13"
+description: "Compte-rendu d'intervention et rapport technique sur : Partitionnement de LVM sur Debian 13."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+Dans le cadre du déploiement de l'infrastructure IMDEO, l'objectif de cette intervention était d'installer un serveur Debian 13 en abandonnant le partitionnement classique au profit de la technologie LVM (Logical Volume Manager). Ce choix d'architecture de stockage répond à un besoin critique de flexibilité, de sécurité et d'évolutivité. L'enjeu principal consistait à isoler logiquement les différentes arborescences du système (comme `/var` pour les journaux ou `/home` pour les données utilisateurs) afin de garantir qu'une saturation d'espace sur un service n'entraîne pas le crash global du serveur, tout en permettant de redimensionner les disques "à chaud" à l'avenir.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés lors de l'installation de l'OS :
+
+<Steps>
+1. **Préparation de la partition d'amorçage (/boot) hors LVM :** 
+   Le chargeur d'amorçage (GRUB) nécessitant un accès direct au noyau Linux avant de pouvoir charger les modules complexes de LVM, une partition primaire standard a été créée en tout début de disque. Formatée en `ext4` avec 1 Go d'espace, elle garantit un stockage suffisant pour conserver sereinement plusieurs versions du noyau au fil des mises à jour de sécurité.
+
+2. **Création du conteneur physique et du groupe de volumes (VG) :** 
+   L'espace libre restant sur le disque physique a été initialisé puis agrégé pour former un Groupe de Volumes (VG) nommé `vg_imdeo`. Ce groupe agit comme un vaste "réservoir" abstrait du matériel. Si le serveur vient à manquer de place à l'avenir, il suffira d'ajouter un nouveau disque physique dans ce même réservoir.
+
+3. **Découpage des volumes logiques (LV) et isolation des données :** 
+   À partir du réservoir global, plusieurs Volumes Logiques (LV) ont été taillés sur mesure pour segmenter le système : `lvroot` pour la racine de l'OS, `lvhome` pour les profils utilisateurs, `lvvar` pour la variabilité (logs, bases de données) et `lvswap` pour la mémoire virtuelle. Cette étape est la clé de voûte de la résilience du système.
+
+4. **Formatage (BTRFS) et définition des points de montage :** 
+   Chaque volume logique a ensuite été formaté et lié à un dossier système. Le système de fichiers moderne `btrfs` a été sélectionné pour les partitions de données. Ce choix technique stratégique permet de bénéficier du redimensionnement dynamique à chaud et prépare le terrain pour une gestion optimisée des snapshots.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** L'installation du système Debian 13 s'est achevée avec une structure de stockage résiliente et opérationnelle.
+- Le serveur démarre correctement de manière autonome grâce à l'isolation de la partition `/boot`.
+- L'intégrité du système est protégée : la saturation potentielle des journaux (`/var`) ou des données utilisateurs (`/home`) ne peut plus bloquer la partition racine (`/`).
+- L'infrastructure est hautement évolutive : l'espace de stockage peut désormais être étendu dynamiquement en production grâce à la combinaison de LVM et BTRFS.
+:::
+
+L'attention devra désormais se porter sur le monitoring de ces volumes. L'utilisation future de snapshots (bien que très pratique pour les retours en arrière rapides) nécessitera une vigilance particulière sur le remplissage du groupe de volumes pour ne pas dégrader les performances d'écriture (I/O).
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.1 Gérer le patrimoine informatique** | **Vérifier la continuité** | Isolation logique des points de montage critiques (`/var`, `/home`) pour prévenir tout déni de service (crash système) lié à une saturation de l'espace de stockage. |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Implémentation des standards de partitionnement serveur actuels (LVM, ext4 pour l'amorçage, BTRFS pour les données) favorisant la sécurité et la maintenabilité. |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Déploiement, configuration de l'architecture de stockage sous-jacente et installation du système d'exploitation Debian 13 pour l'infrastructure IMDEO. |

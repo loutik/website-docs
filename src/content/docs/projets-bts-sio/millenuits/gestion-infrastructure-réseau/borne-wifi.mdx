@@ -1,0 +1,46 @@
+---
+title: "Mise en place de l'AP"
+description: "Compte-rendu d'intervention et rapport technique sur : Mise en place de l'AP et segmentation du réseau Wi-Fi."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention consiste à intégrer une borne d'accès Wi-Fi (AP) au sein de l'infrastructure réseau de l'environnement "MILLENUITS". Le besoin technique principal est d'assurer une ségrégation stricte des flux de données entre un réseau "Commercial" et un réseau "Invité". Cela implique la mise en place d'un routage inter-VLAN sur les équipements de cœur de réseau (routeur et commutateur), suivie du provisionnement de la borne avec une adresse de management statique et du déploiement sécurisé du SSID invité.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Préparation de l'infrastructure de routage et commutation :** 
+   La première étape a consisté à préparer la couche réseau. Une sous-interface logique a été créée sur le routeur avec une encapsulation 802.1Q pour gérer le trafic du VLAN 15 (Invité), en lui attribuant l'adresse IP de passerelle et en configurant le NAT. Côté commutateur, les VLANs ont été déclarés dans la base de données, le port de liaison montante a été configuré en mode Trunk pour autoriser le trafic taggué, et les ports d'accès dédiés à la borne et aux autres équipements ont été affectés statiquement aux bons VLANs.
+
+2. **Accès initial et adressage de management de la borne :** 
+   La borne étant dans sa configuration d'usine, un poste d'administration a été temporairement configuré avec un adressage IP statique dans le même sous-réseau (192.168.0.0/24) pour accéder à son interface web. L'équipement a ensuite été intégré au plan d'adressage de l'infrastructure en lui attribuant une adresse IP de management statique (172.40.2.129) associée à un masque /28, et en renseignant la passerelle configurée précédemment sur le routeur.
+
+3. **Déploiement du réseau sans-fil (SSID) et tests de validation :** 
+   Le mode Point d'Accès a été activé pour diffuser le réseau sans-fil nommé "INVITE Louis". Ce réseau a été sécurisé via le protocole d'authentification WPA-Personal avec une clé pré-partagée. Après l'application de la configuration et le redémarrage de l'équipement, la connectivité a été validée par un test de joignabilité ICMP (ping) depuis le réseau local et par la vérification de la diffusion effective du SSID sur un terminal mobile.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** L'infrastructure réseau et la borne Wi-Fi sont totalement opérationnelles.
+* Le routage inter-VLAN et la segmentation (VLAN 11 et VLAN 15) sont fonctionnels.
+* L'interface de management de la borne est accessible via son adresse IP statique.
+* Le SSID invité est correctement diffusé, sécurisé et prêt à accueillir les connexions des utilisateurs.
+:::
+
+L'utilisation d'un masque de sous-réseau restrictif (/28, limitant à 14 hôtes) sur le segment de management garantit une optimisation de l'espace d'adressage et réduit la surface d'exposition du sous-réseau d'infrastructure, respectant ainsi les bonnes pratiques de sécurité (DevSecOps). Il sera impératif de modifier les identifiants par défaut de la borne lors d'une prochaine phase de durcissement.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.1 Gérer le patrimoine informatique** | **Mettre en place les habilitations / Vérifier les règles d'utilisation** | Implémentation d'une segmentation logique stricte via les VLANs pour isoler le trafic invité du réseau commercial, et sécurisation de l'accès sans-fil via le protocole WPA-Personal. |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Configuration matérielle et logicielle des interfaces réseaux (routeur Cisco, switch) et provisionnement complet de la borne Wi-Fi autonome pour diffuser le nouveau SSID. |
+| **1.5 Mettre à disposition un service** | **Réaliser les tests d’intégration** | Validation de la continuité de service post-déploiement via des requêtes ICMP sur la nouvelle passerelle de management et vérification visuelle de l'association au réseau Wi-Fi diffusé. |
