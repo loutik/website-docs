@@ -1,0 +1,47 @@
+---
+title: "Création d'une documentation avec MkDocs et GitHub Pages"
+description: "Compte-rendu d'intervention et rapport technique sur : Création d'une documentation avec MkDocs et GitHub Pages."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention est de concevoir et de déployer une plateforme de documentation technique centralisée pour le projet Millenuits. Le besoin initial résidait dans la nécessité de structurer les procédures réseau et système, tout en automatisant la publication pour garantir une information toujours à jour. La solution retenue s'appuie sur le générateur de site statique MkDocs (via le thème Material) et la mise en place d'une chaîne d'intégration et de déploiement continus (CI/CD) automatisée avec GitHub Actions vers l'hébergement GitHub Pages.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Initialisation de l'environnement de développement MkDocs :** 
+   L'environnement local a été préparé en installant les dépendances Python requises, notamment le framework MkDocs et son thème visuel Material. L'architecture du projet de documentation a ensuite été générée et paramétrée via le fichier `mkdocs.yaml` pour définir l'identité du site, la langue de l'interface et l'activation du moteur de recherche interne.
+
+2. **Implémentation du pipeline d'automatisation (CI/CD) :** 
+   Un workflow GitHub Actions a été déclaré à la racine du dépôt (`publish.yaml`). Ce pipeline a été configuré pour se déclencher automatiquement lors de chaque `push` sur la branche principale. Il provisionne un conteneur d'exécution Linux, installe les prérequis Python, compile les sources Markdown en HTML statique, puis force le déploiement sur la branche de production (`gh-pages`).
+
+3. **Tests d'intégration et recette fonctionnelle :** 
+   Le déploiement a fait l'objet d'une validation en trois étapes. D'abord, un serveur de développement local a confirmé la bonne génération du site. Ensuite, l'exécution fluide du pipeline d'intégration a été contrôlée sur l'interface GitHub. Enfin, une recette fonctionnelle en production a permis de valider l'accessibilité HTTP (Code 200), le routage des images, l'efficacité du moteur de recherche et le comportement responsive de l'interface web.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** 
+- La documentation technique est opérationnelle et accessible publiquement via l'URL GitHub Pages.
+- La publication est totalement automatisée : la mise à jour des fichiers sources déclenche un déploiement sans intervention manuelle.
+- L'expérience utilisateur est validée, incluant une navigation fluide, une recherche pertinente et un affichage adapté aux terminaux mobiles.
+- L'arborescence du dépôt sépare logiquement la configuration d'infrastructure, les scripts d'automatisation et les sources Markdown.
+:::
+
+Une vigilance particulière a été requise lors de la déclaration des chemins de ressources statiques (images) afin d'assurer leur rendu simultané sur le dépôt Git brut et sur la version web compilée. Par ailleurs, la stricte indentation exigée par le format YAML a nécessité une rigueur d'écriture lors de la conception du workflow CI/CD.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Création et paramétrage d'un pipeline CI/CD (GitHub Actions) pour automatiser la compilation et le déploiement continu du site statique MkDocs vers GitHub Pages. |
+| **1.5 Mettre à disposition un service** | **Réaliser les tests d’intégration** | Conception et exécution d'une fiche recette en trois phases (locale, pipeline, production) pour certifier l'accessibilité et les fonctionnalités du site (recherche, responsivité, intégrité des médias). |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Structuration des procédures techniques au standard Markdown et utilisation rigoureuse du format YAML pour la configuration du générateur de site et du script d'automatisation. |

@@ -1,0 +1,23 @@
+---
+title: Homepage
+description: Documentation technique, infrastructures et projets BTS SIO.
+template: splash
+---
+
+import AccueilLoutik from '../../components/AccueilLoutik.astro';
+
+<style>{`
+  /* Neutralisation du titre fantôme */
+  h1#_top {
+    display: none !important;
+  }
+
+  /* Reset strict des conteneurs structurels de Starlight */
+  :global(main), :global(.sl-container), :global(.content-panel) {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    border-top: none !important;
+  }
+`}</style>
+
+<AccueilLoutik />

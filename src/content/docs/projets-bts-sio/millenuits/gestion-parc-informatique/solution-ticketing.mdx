@@ -1,0 +1,56 @@
+---
+title: "Mise en place d'une solution de ticketing"
+description: "Compte-rendu d'intervention et rapport technique sur : Mise en place d'une solution de ticketing."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention était de doter l'entreprise Millenuits d'une solution centralisée de gestion des services informatiques (ITSM) et de support utilisateur (Helpdesk). Face à la nécessité de structurer les demandes des 167 collaborateurs répartis sur deux sites géographiques distincts, il fallait déployer un outil permettant la déclaration d'incidents, le suivi par une équipe de trois techniciens, et l'édition de statistiques pour la Direction des Systèmes d'Information (DSI). L'outil devait être gratuit, hébergeable sur une infrastructure Linux existante et intégrer une base de connaissances.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Étude des besoins et choix technologique :** 
+   Analyse du cahier des charges et comparaison des solutions du marché (GLPI, osTicket, Zammad, Hesk). GLPI a été retenu pour son adéquation parfaite avec les prérequis : gratuité, respect des bonnes pratiques ITIL, richesse du module de ticketing et intégration d'une base de connaissances.
+
+2. **Préparation du socle d'hébergement (LAMP) :** 
+   Mise en place de l'environnement serveur sur une distribution Debian. Cette étape a consisté à installer et durcir un serveur web Apache2 couplé à PHP 8.4-FPM pour des performances optimales. Une base de données MariaDB a été déployée, sécurisée (désactivation des accès distants root, suppression des bases de test) et dotée d'un utilisateur restreint dédié à l'application.
+
+3. **Déploiement et sécurisation de GLPI :** 
+   Téléchargement et extraction de l'archive officielle de GLPI dans le répertoire web. Une attention particulière a été portée à la sécurité : ajustement des droits système (`www-data`), déplacement des répertoires sensibles (`config`, `files`, `log`) en dehors de la racine publique d'Apache, et configuration du VirtualHost avec réécriture d'URL. 
+
+4. **Paramétrage métier et logique d'entreprise :** 
+   Post-installation, l'environnement a été cloisonné. L'arborescence géographique a été recréée (Sites de Baugé et Joué-Lès-Tours), et les habilitations ont été structurées via des profils stricts : *Self-Service* (utilisateurs), *Technician* (support) et *Super-Admin* (DSI). Les catégories d'incidents ITIL et les niveaux de service (SLA) ont également été définis.
+
+5. **Phase de recette et validation :** 
+   Exécution d'un plan de tests complet pour valider chaque parcours utilisateur. Les tests ont inclus la vérification des blocages de sécurité (comptes par défaut désactivés), la création d'un ticket par un utilisateur standard, sa prise en charge et sa résolution par un technicien, ainsi que la génération de rapports statistiques par l'administrateur.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** La plateforme de ticketing GLPI est aujourd'hui pleinement opérationnelle et sécurisée. 
+* Les collaborateurs disposent d'un portail intuitif pour déclarer leurs incidents.
+* Les techniciens peuvent s'attribuer, documenter et résoudre les tickets efficacement.
+* La base de connaissances est active pour capitaliser sur les résolutions.
+* La DSI dispose de ses tableaux de bord pour le suivi des performances (SLA).
+:::
+
+La principale complexité a résidé dans le durcissement post-installation (déplacement des dossiers racines et modification des directives PHP `cookie_httponly`), qui a nécessité la création de fichiers de liens symboliques internes (`downstream.php`) pour maintenir l'intégrité de l'application tout en garantissant un haut niveau de sécurité web.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.4 Travailler en mode projet** | **Analyser les objectifs** | Étude comparative des solutions du marché (GLPI vs Zammad/osTicket) pour répondre précisément au cahier des charges de la DSI de Millenuits. |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Installation, configuration du socle serveur LAMP (Apache, PHP-FPM, MariaDB) et déploiement de l'applicatif GLPI. |
+| **1.1 Gérer le patrimoine informatique** | **Mettre en place les habilitations** | Création des entités géographiques, gestion des rôles (Self-Service, Technicien, Admin) et application du principe de moindre privilège. |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Implémentation des catégories de tickets, des règles d'attribution et des SLA selon les bonnes pratiques du référentiel ITIL. |
+| **1.5 Mettre à disposition un service** | **Réaliser les tests d’intégration** | Exécution d'une fiche de recette stricte (tests de vulnérabilité basiques, simulation de bout en bout d'un ticket utilisateur vers technicien). |
+| **1.5 Mettre à disposition un service** | **Accompagner les utilisateurs** | Rédaction des guides d'utilisation contextualisés (Profil Utilisateur, Helpdesk, Administrateur) pour faciliter la prise en main de la plateforme. |

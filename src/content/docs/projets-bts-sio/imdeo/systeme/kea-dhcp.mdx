@@ -1,0 +1,51 @@
+---
+title: "Mise en place de Kea DHCP sur Debian 13"
+description: "Compte-rendu d'intervention et rapport technique sur : Mise en place de Kea DHCP sur Debian 13."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention était de moderniser et de sécuriser le service d'attribution des adresses IP au sein de l'infrastructure en déployant un serveur Kea DHCP (le successeur moderne et modulaire d'ISC DHCP) sur un environnement Debian 13. Le besoin initial consistait à segmenter le réseau en plusieurs sous-réseaux distincts (Commercial, Ressources Humaines, Direction, Comptabilité) tout en assurant une haute disponibilité du service (tolérance aux pannes) via une architecture redondée s'appuyant sur des relais DHCP au niveau du routeur. 
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Préparation du système et installation du service :** 
+   Avant tout déploiement, le système d'exploitation Debian a été intégralement mis à jour pour garantir la sécurité et la stabilité de l'environnement. Le paquet spécifique `kea-dhcp4-server`, qui gère le protocole IPv4, a ensuite été installé et son état d'exécution initial a été vérifié auprès du gestionnaire de services du système.
+
+2. **Sécurisation et configuration des étendues DHCP :** 
+   Conformément aux bonnes pratiques d'administration, une sauvegarde du fichier de configuration par défaut a été réalisée (création d'un fichier `.bak`) avant toute modification. Le fichier de configuration, structuré en JSON, a ensuite été édité de manière sécurisée pour déclarer l'interface d'écoute et définir les différents sous-réseaux (Commercial, RH, DIR, COMPTA). Pour chaque segment, des plages d'adresses spécifiques, des serveurs DNS et des passerelles par défaut ont été rigoureusement attribués.
+
+3. **Validation syntaxique et application :** 
+   Afin d'éviter toute interruption de service due à une erreur de frappe, la syntaxe du nouveau fichier de configuration a été testée à blanc avec un outil de diagnostic intégré, en utilisant les droits de l'utilisateur de service restreint (`_kea`). Une fois la validation confirmée, le service a été redémarré pour appliquer la nouvelle politique de distribution réseau.
+
+4. **Implémentation du relais DHCP et tests de Haute Disponibilité (HA) :** 
+   Le routeur cœur de réseau (Cisco) a été configuré avec des agents de relais (`ip helper-address`) pour intercepter les requêtes de diffusion des clients et les transférer en unicast vers nos deux serveurs Kea DHCP. Des tests poussés ont été réalisés depuis un poste client Windows (libération et renouvellement des baux IP) pour simuler la panne totale du serveur principal et confirmer que le serveur secondaire prenait le relais instantanément, garantissant ainsi la continuité d'activité.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** L'infrastructure DHCP est désormais pleinement opérationnelle et résiliente. 
+* Les postes clients obtiennent dynamiquement leurs configurations réseau (IP, DNS, Passerelle) en fonction de leur sous-réseau d'appartenance.
+* Le relais DHCP sur le routeur Cisco intercepte et redirige correctement le trafic.
+* Le mécanisme de tolérance aux pannes a été validé : la perte du serveur DHCP principal n'impacte pas l'attribution des baux grâce à la prise de relais du serveur secondaire.
+:::
+
+L'utilisation de la vérification syntaxique avant le redémarrage du service s'est révélée être une étape cruciale pour maintenir la stabilité de l'infrastructure lors du paramétrage intensif du format JSON, évitant ainsi un crash silencieux du démon.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Installation du paquet `kea-dhcp4-server` sur Debian 13 et paramétrage des étendues réseau (Commercial, RH, DIR, COMPTA) via la configuration JSON. |
+| **1.1 Gérer le patrimoine informatique** | **Gérer des sauvegardes** | Création d'une sauvegarde préventive du fichier de configuration initial (`kea-dhcp4.conf.bak`) avant d'appliquer les nouvelles règles. |
+| **1.1 Gérer le patrimoine informatique** | **Vérifier la continuité** | Planification et validation de la haute disponibilité en simulant l'arrêt du serveur principal pour vérifier la prise de relais par le serveur secondaire. |
+| **1.5 Mettre à disposition un service** | **Réaliser les tests d’intégration** | Exécution du plan de recette : vérification des relais (`ip helper-address`) sur le routeur Cisco et tests de renouvellement de bail (`ipconfig /renew`) sur un poste client. |
+| **1.1 Gérer le patrimoine informatique** | **Vérifier les règles d'utilisation** | Utilisation de l'outil de diagnostic intégré (`-t`) et d'un utilisateur de service restreint (`-u _kea`) pour valider la configuration avant application. |

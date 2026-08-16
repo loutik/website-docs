@@ -1,0 +1,48 @@
+---
+title: Bienvenue 👋
+description: A guide in my new Starlight docs site.
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2rem; margin-bottom: 3rem; background-color: var(--sl-color-gray-6); padding: 2rem; border-radius: 0.5rem; border: 1px solid var(--sl-color-gray-5);">
+  <img src="/photo_louismedo.jpg" alt="Photo de Louis MEDO" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid var(--sl-color-accent);" />
+  <div style="flex: 1; min-width: 250px;">
+    ### Qui suis-je ?
+    Je m'appelle Louis MEDO, et je suis un passionné d'informatique. Ma nature curieuse m'a toujours poussé à comprendre le fonctionnement des choses, des frigos aux ordinateurs. J'ai commencé par le hardware : monter des PC, comprendre le stockage... Puis est venu le déclic au collège avec la découverte d'un logiciel de vie scolaire bien connu, Pronote. Ma curiosité a été piquée au vif : comment cela fonctionnait-il ? En cherchant, j'ai découvert qu'on pouvait l'auto-héberger. Ma vocation de sysadmin était née.
+  </div>
+</div>
+
+## Mais qu'est-ce que Loutik au juste ?
+
+Loutik est un projet personnel que j'ai créé pour nourrir ma passion pour l'ingénierie système. Mon objectif est de simuler un véritable environnement de production pour héberger des outils open source, tout en respectant l'état de l'art de l'industrie (SRE, FinOps, GreenOps). C'est mon laboratoire d'expérimentation pour "casser proprement" et apprendre à réparer.
+
+Loutik est l'aboutissement de ce parcours. C'est ma plateforme pour concevoir une infrastructure d'entreprise, de la documentation as Code au déploiement des services. Outre la technique, je souhaite également héberger des projets open source pour permettre au plus grand nombre de tester ces outils gratuitement. Mon objectif à terme est de travailler en tant qu'architecte d'infrastructure, de penser des infrastructures résilientes, sécurisées et souveraines.
+
+## Pourquoi faire une documentation ?
+
+Pour moi, la documentation est la fondation d'une infrastructure. Sans organisation, un système s'effondrera à la première défaillance de production, avec des conséquences lourdes (j'en ai fait l'expérience, quand un disque meurt et que tu perds tes vm...). C'est pourquoi j'applique la méthode "Docs-as-Code". Écrire ces guides me permet de valider mes acquis, de partager mes découvertes, et de garantir la reproductibilité de mon environnement.
+
+## Comment naviguer à travers ma documentation ?
+
+La documentation est composée de 3 sections principales :
+
+<CardGrid stagger>
+  <Card title="🏠 Homelab">
+    Documente l'intégralité de mon infrastructure personnelle. Vous y trouverez les registres de décisions d'architecture justifiant mes choix d'hyperviseurs et d'orchestrateurs, ainsi que les topologies réseau et les stratégies de conception.
+    <br/><br/>
+    <LinkCard title="Explorer le Homelab" href="/homelab/" />
+  </Card>
+
+  <Card title="📚 Notions">
+    Une base de connaissances dédiée à la compréhension théorique et pratique des technologies exploitées (conteneurisation, LLM, etc.). C'est ici que je démystifie les paradigmes informatiques et les concepts d'ingénierie.
+    <br/><br/>
+    <LinkCard title="Consulter les notions" href="/notions/" />
+  </Card>
+
+  <Card title="📖 Projets BTS SIO">
+    Présentation des infrastructures et solutions techniques réalisées dans le cadre de ma formation (ex: projets Millenuits, Imdeo). Analyse des cahiers des charges, justifications techniques et cartographies réseau.
+    <br/><br/>
+    <LinkCard title="Voir les projets" href="/projets-bts-sio/" />
+  </Card>
+</CardGrid>

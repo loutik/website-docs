@@ -1,0 +1,50 @@
+---
+title: "Mise en place du SSH sur Debian 13"
+description: "Compte-rendu d'intervention et rapport technique sur : Mise en place du SSH sur Debian 13."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention était d'établir un canal de communication sécurisé pour l'administration distante d'un serveur Debian 13. Le besoin initial consistait à abandonner l'authentification traditionnelle par mot de passe, particulièrement vulnérable aux attaques par force brute, au profit d'une authentification forte reposant sur la cryptographie asymétrique. Il s'agissait également de durcir la configuration du service pour répondre aux standards de sécurité actuels des infrastructures (DevSecOps).
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Déploiement et initialisation du service :** 
+   Installation du paquet `openssh-server` afin de déployer le démon permettant d'écouter les requêtes de connexion entrantes. Le statut du service a ensuite été vérifié pour s'assurer de son bon fonctionnement en arrière-plan.
+
+2. **Mise en place de l'authentification par clés asymétriques :** 
+   Génération d'une paire de clés cryptographiques sur le poste client en utilisant l'algorithme Ed25519, reconnu pour sa robustesse et ses performances. La clé publique a ensuite été injectée de manière sécurisée sur le serveur dans le fichier des clés autorisées, liant ainsi cryptographiquement le poste client au serveur.
+
+3. **Durcissement (Hardening) de la configuration SSH :** 
+   Modification du fichier de configuration principal (`sshd_config`) pour verrouiller les accès. L'authentification par mot de passe a été intégralement désactivée, et la connexion directe via le compte super-utilisateur (`root`) a été formellement interdite, forçant ainsi l'élévation de privilèges tracée.
+
+4. **Gestion des identités et prévention des attaques MITM :** 
+   Application du principe TOFU (Trust On First Use) par la vérification manuelle de l'empreinte cryptographique (fingerprint) du serveur. Les commandes de gestion du fichier `known_hosts` ont été maîtrisées pour purger ou valider les identités des hôtes distants en cas de réinstallation, évitant ainsi les usurpations d'identité.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** 
+* Le démon SSH est pleinement opérationnel et écoute les requêtes entrantes.
+* L'authentification ne s'effectue plus que par présentation d'une clé privée Ed25519 chiffrée.
+* Les tentatives de connexion par mot de passe ou via le compte `root` sont rejetées par le serveur.
+* Les empreintes cryptographiques sont gérées proprement, garantissant l'intégrité de la connexion.
+:::
+
+L'intervention a permis d'élever significativement le niveau de sécurité du serveur. Bien que le changement de port par défaut (22) n'apporte pas de sécurité cryptographique supplémentaire, il a été noté comme une piste d'amélioration de "confort" pour réduire la pollution des journaux d'événements (logs) face aux scanners automatisés.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Installation, activation et vérification du démon `openssh-server` sur le système Debian 13 pour rendre l'infrastructure administrable à distance. |
+| **1.1 Gérer le patrimoine informatique** | **Mettre en place les habilitations** | Création d'identités cryptographiques (clés Ed25519) et configuration du mécanisme d'autorisation (`authorized_keys`) pour n'autoriser que les terminaux approuvés. |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Durcissement du fichier de configuration (`sshd_config`) selon les bonnes pratiques de sécurité : interdiction du login root, suppression des mots de passe et gestion des empreintes (Principe TOFU). |

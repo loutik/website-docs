@@ -1,0 +1,36 @@
+---
+// src/components/SiteTitle.astro
+import type { Props } from '@astrojs/starlight/props';
+---
+
+<a href="/" class="custom-site-title" aria-label="Accueil LoutikDOCS">
+  <img src="/favicon.svg" alt="Logo Loutik" class="nav-logo" />
+  
+  <span class="title-text">
+    <span class="brand-dark">Loutik</span><span class="brand-orange">DOCS</span>
+  </span>
+</a>
+
+<style>
+  .custom-site-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .nav-logo {
+    height: 2rem;
+    width: auto;
+  }
+
+  .brand-dark { 
+    color: var(--sl-color-text); /* Le texte s'inversera automatiquement en mode clair/sombre */
+  }
+  
+  .brand-orange { 
+    color: #f78c6b;
+  }
+</style>

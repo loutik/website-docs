@@ -1,0 +1,85 @@
+---
+import Default from '@astrojs/starlight/components/Footer.astro';
+---
+
+<Default {...Astro.props} />
+
+<div class="starlight-custom-footer">
+  <div class="footer-container">
+    <nav class="footer-col" aria-label="Navigation principale">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="/homelab">🏗️ Homelab</a></li>
+        <li><a href="/notions">📚 Notions</a></li>
+        <li><a href="/projets-bts-sio">📖 Projets BTS SIO</a></li>
+        <li><a href="/blog">🖍️ Blog</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-label="Réseaux sociaux">
+      <h3>Contact</h3>
+      <ul>
+        <li><a href="https://www.youtube.com/@FireToak">Youtube</a></li>
+        <li><a href="https://discord.loutik.fr">Discord</a></li>
+        <li><a href="https://github.com/FireToak">Github</a></li>
+        <li><a href="mailto:louis.medo@loutik.ext">Mail</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-label="Informations légales">
+      <h3>Légal</h3>
+      <ul>
+        <li><a href="/mentions-legales-loutik.pdf">Mentions Légales</a></li>
+        <li><a href="/politique-confidentialite-loutik.pdf">Confidentialité</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<!-- CSS custom -->
+<style is:global>
+  header.header {
+    z-index: 10000 !important;
+  }
+
+  /* Élévation du contenu pour que le footer passe au-dessus de la sidebar latérale */
+  .main-pane {
+    position: relative !important;
+  }
+
+  /* Neutralisation des espaces imposés par le framework */
+  main, .sl-container {
+    padding-bottom: 0 !important;
+  }
+</style>
+
+<!-- Styles locaux -->
+<style>
+  .starlight-custom-footer {
+    background-color: #0b515a;
+    color: white;
+    padding: 4rem 0;
+    font-family: var(--sl-font-system, system-ui, sans-serif);
+    
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-bottom: calc(-1 * var(--sl-content-pad-y, 4rem));
+    position: relative;
+  }
+
+  .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8rem; 
+    max-width: 1200px;
+    margin: 0 auto; 
+    padding: 0 2rem;
+  }
+
+  .footer-col { display: flex; flex-direction: column; }
+  .footer-col h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 1.2rem; color: white; }
+  .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+  .footer-col a { color: white; text-decoration: none; transition: opacity 0.2s ease-in-out; }
+  .footer-col a:hover { opacity: 0.7; text-decoration: underline; }
+</style>

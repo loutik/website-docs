@@ -1,0 +1,43 @@
+---
+title: "Mise en place du routage sur un commutateur et un routeur de niveau 3 cisco"
+description: "Compte-rendu d'intervention et rapport technique sur : Mise en place du routage sur un commutateur et un routeur de niveau 3 cisco."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+Dans le cadre de la préparation de l'infrastructure réseau d'IMDEO, l'objectif de cette intervention était d'établir l'adressage et d'assurer le routage interne et externe. Il s'agissait de configurer le routage inter-VLAN sur un commutateur de niveau 3 ainsi que sur un routeur Cisco, afin de garantir l'isolation logique des flux (VLANs) tout en permettant la communication contrôlée entre les différents sous-réseaux et l'accès vers l'extérieur (WAN).
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Activation du routage et définition des passerelles internes (Commutateur L3) :** 
+   Activation du moteur de routage IP global du commutateur. Les VLANs de production (ex: COM) ont été déclarés et associés à des interfaces virtuelles de routage (SVI). Chaque interface virtuelle a reçu une configuration IP pour agir en tant que passerelle par défaut pour son réseau cible.
+
+2. **Configuration de l'encapsulation et des liaisons Trunk inter-équipements :** 
+   Sécurisation des liens inter-commutateurs en forçant le mode Trunk et en restreignant le trafic aux seuls VLANs nécessaires. Côté routeur (approche "Router-on-a-Stick"), le port physique a été activé pour supporter des sous-interfaces logiques. Chacune a été configurée avec le standard d'encapsulation 802.1Q pour traiter spécifiquement les trames taguées de chaque VLAN.
+
+3. **Interconnexion WAN et définition des routes de dernier recours :** 
+   Attribution de l'adressage IP sur l'interface de sortie WAN du routeur. Enfin, des routes statiques par défaut (`0.0.0.0 0.0.0.0`) ont été déployées en cascade : le commutateur L3 redirige le trafic inconnu vers le routeur interne, et le routeur transfère ce flux sortant vers l'équipement du fournisseur d'accès à Internet (FAI).
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** 
+- Le routage inter-VLAN est pleinement opérationnel via les SVI et les sous-interfaces du routeur.
+- La segmentation réseau est respectée grâce au filtrage 802.1Q sur les liens agrégés.
+- Les requêtes sortantes (Internet/WAN) sont correctement acheminées par le biais des routes par défaut statiques.
+:::
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Implémentation du standard d'encapsulation IEEE 802.1Q sur les sous-interfaces et les liens Trunk pour la gestion des trames réseau taguées. |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Déploiement et configuration des services de routage IP (statique et inter-VLAN) sur les équipements d'infrastructure Cisco (Commutateur L3 et Routeur). |

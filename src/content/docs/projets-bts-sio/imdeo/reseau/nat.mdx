@@ -1,0 +1,49 @@
+---
+title: "Mise en place du NAT"
+description: "Compte-rendu d'intervention et rapport technique sur : Configuration du routage NAT/PAT sur l'infrastructure IMDEO."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'objectif de cette intervention était d'interconnecter le réseau local de l'infrastructure IMDEO à Internet de manière sécurisée. Il s'agissait de configurer un routeur Cisco pour partager une adresse IP publique unique avec plusieurs postes internes via la translation d'adresses par port (PAT), tout en appliquant une politique de sécurité stricte visant à isoler spécifiquement le VLAN d'administration de tout accès externe.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Définition des zones de confiance (Interfaces Inside/Outside) :** 
+   La première étape a consisté à cartographier le flux réseau sur le routeur. L'interface connectée au réseau local a été déclarée comme zone interne (Inside), tandis que l'interface de sortie vers le Fournisseur d'Accès Internet a été désignée comme zone publique (Outside). Cela permet au routeur de savoir dans quel sens appliquer la traduction d'adresse.
+
+2. **Implémentation du filtrage réseau (ACL) :** 
+   Afin de sécuriser l'infrastructure, une liste de contrôle d'accès (Access Control List) standard a été rédigée. L'enjeu stratégique était d'interdire explicitement le routage vers Internet pour le sous-réseau d'administration (en utilisant le masque générique inverse), tout en autorisant le trafic provenant des autres sous-réseaux opérationnels (comme le VLAN COM).
+
+3. **Activation de la translation d'adresses (PAT / Overload) :** 
+   Le service de traduction a ensuite été activé en liant l'ACL précédemment créée à l'interface publique du routeur. L'utilisation du paramètre de surcharge (Overload) a été configurée pour activer le PAT (Port Address Translation), permettant ainsi de multiplexer les connexions simultanées de plusieurs machines internes sur une seule IP publique grâce à l'attribution de ports distincts.
+
+4. **Validation et audit des flux :** 
+   La recette de l'intervention a été réalisée en générant du trafic ICMP (ping vers un DNS public) depuis un poste client autorisé. L'audit de la table de traduction (`show ip nat translations`) et des statistiques globales a permis de confirmer la création dynamique des sessions NAT et le bon comptage des paquets traduits.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** 
+- Le service d'accès à Internet est opérationnel pour les réseaux autorisés.
+- Le VLAN Administration est correctement isolé et bloqué aux frontières du réseau interne.
+- Le routeur multiplexe correctement les sessions (PAT) en traduisant les IP privées vers l'IP publique.
+:::
+
+L'utilisation du masque générique (wildcard mask) lors de la création de l'ACL requiert une attention particulière, notamment en plaçant les règles de refus (`deny`) avant les règles d'autorisation (`permit`) pour garantir l'application correcte de la politique de sécurité.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.1 Gérer le patrimoine informatique** | **Vérifier les règles d'utilisation** | Implémentation d'une politique de filtrage stricte (ACL) pour interdire l'accès Internet au sous-réseau d'administration d'IMDEO. |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Configuration et activation du service NAT/PAT sur l'équipement de routage Cisco pour permettre la connectivité externe. |
+| **1.5 Mettre à disposition un service** | **Réaliser les tests d’intégration** | Vérification du trafic généré (ping) et analyse des tables de traduction dynamiques sur le routeur pour valider le fonctionnement. |

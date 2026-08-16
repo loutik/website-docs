@@ -1,0 +1,50 @@
+---
+title: "Sécurisation du bootloader GRUB 2"
+description: "Compte-rendu d'intervention et rapport technique sur : Sécurisation du bootloader GRUB 2."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+L'accès physique ou console à un serveur non sécurisé représente une vulnérabilité critique. Par défaut, le chargeur d'amorçage GRUB 2 permet à n'importe quel utilisateur d'interrompre la séquence de démarrage pour injecter des paramètres noyau (comme `init=/bin/sh`). Cette faille permet d'obtenir un accès `root` en lecture-écriture et de compromettre l'intégralité du système, notamment en réinitialisant les mots de passe à l'insu des administrateurs[cite: 1]. L'objectif de cette intervention est de verrouiller l'édition du GRUB par une authentification forte, tout en garantissant une expérience de saisie fiable (clavier AZERTY) pour les opérations de maintenance.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Audit et démonstration de la compromission initiale :** 
+   Avant de sécuriser le système, une simulation d'attaque a été réalisée en modifiant les paramètres d'amorçage au vol. L'ajout de l'instruction de lancement d'un shell direct a permis de monter le volume racine de la distribution, démontrant la facilité avec laquelle un attaquant peut usurper des droits d'administration et modifier des mots de passe système.
+
+2. **Intégration de la disposition clavier AZERTY :** 
+   GRUB utilisant nativement une disposition QWERTY, il était impératif de configurer le clavier en français (AZERTY) pour éviter toute erreur lors de la saisie future du mot de passe complexe. Un fichier de disposition spécifique a été compilé à partir de la cartographie système, puis injecté dans les modules de configuration personnalisée de GRUB.
+
+3. **Mise en place des habilitations et du chiffrement :** 
+   Afin de ne jamais stocker de secret en clair, une empreinte cryptographique robuste (condensat PBKDF2) a été générée via l'outil dédié. Un compte superutilisateur exclusif à l'amorçage (`adminsio`) a ensuite été déclaré dans les fichiers de configuration, en l'associant directement à ce hash. 
+
+4. **Déploiement des règles et validation :** 
+   Une exception (directive `--unrestricted`) a été implémentée dans les scripts de génération pour s'assurer que la machine démarre son système d'exploitation normalement sans demander d'identifiants. Le verrouillage ne s'applique ainsi qu'en cas de tentative d'édition. Les configurations ont ensuite été compilées et appliquées avant un redémarrage de test.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** 
+- Le serveur est désormais protégé contre l'altération physique de ses paramètres de démarrage.
+- Toute tentative d'édition de la séquence de boot (touche `e`) déclenche une demande d'authentification exigeant les identifiants du compte `adminsio`.
+- Le module clavier AZERTY est correctement chargé, garantissant une saisie fiable du mot de passe.
+- Le démarrage standard des services n'est pas bloqué, préservant la continuité de service.
+:::
+
+L'intervention a exigé une attention particulière quant à l'ordre d'exécution des scripts : le module gérant la disposition du clavier a dû être scrupuleusement appelé *avant* la déclaration de l'authentification PBKDF2 pour garantir que le clavier physique soit correctement reconnu au moment de la frappe.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.1 Gérer le patrimoine informatique** | **Mettre en place les habilitations** | Création du compte superutilisateur GRUB (`adminsio`) et intégration d'un mot de passe haché (PBKDF2) pour restreindre l'édition des paramètres d'amorçage. |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Application des bonnes pratiques de sécurité systèmes en générant un condensat cryptographique plutôt qu'un stockage de mot de passe en clair. |
+| **1.1 Gérer le patrimoine informatique** | **Vérifier les règles d'utilisation** | Simulation d'une faille de sécurité physique (élévation de privilèges via `init=/bin/sh`) pour justifier, vérifier et valider le durcissement du serveur. |

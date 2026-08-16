@@ -1,0 +1,51 @@
+---
+title: "Mise en place de l'active directory et du DNS sur Windows Server"
+description: "Compte-rendu d'intervention et rapport technique sur : Mise en place de l'active directory et du DHCP sur Windows Server."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+## 🎯 Objectif de la mission
+
+Dans le cadre du projet d'infrastructure MILLENUITS, l'objectif de cette intervention était de déployer et de sécuriser les services d'annuaire et de résolution de noms, cœurs stratégiques du système d'information. Le besoin initial consistait à provisionner un nouveau contrôleur de domaine (Windows Server 2019) capable de centraliser les identités, de gérer les habilitations réseau et de structurer logiquement les ressources de l'entreprise. Le résultat attendu est un environnement Active Directory (AD DS) et DNS pleinement fonctionnel, hautement sécurisé, et prêt à accueillir les postes clients ainsi que les stratégies de groupe (GPO) des différents services.
+
+## 🛠️ Déroulement des opérations
+
+Pour mener à bien cette mission, l'intervention a été découpée en plusieurs phases clés :
+
+<Steps>
+1. **Provisionnement et configuration système (Nutanix) :** 
+   Création de la machine virtuelle sur le cluster Nutanix avec intégration des pilotes matériels spécifiques (VirtIO) pour garantir la reconnaissance des disques et des interfaces. Le système a été configuré avec un adressage IP statique sur le VLAN dédié, suivi de la sécurisation du compte Administrateur local (génération d'un mot de passe fort via un coffre-fort) et de l'activation du bureau à distance (RDP) pour l'administration continue.
+
+2. **Déploiement et sécurisation des services AD DS et DNS :** 
+   Après avoir standardisé le nom d'hôte du serveur (MN01), les binaires des services de domaine Active Directory ont été installés. Le serveur a ensuite été promu en tant que premier contrôleur de domaine de la forêt. Le service DNS, installé conjointement, a fait l'objet d'un durcissement de sécurité : la récursivité a été totalement désactivée via PowerShell afin de réduire la surface d'attaque et d'empêcher les tentatives d'empoisonnement de cache ou d'amplification DNS.
+
+3. **Structuration logique et création des habilitations :** 
+   Afin de préparer l'application du principe de moindre privilège, l'annuaire a été organisé en Unités d'Organisation (UO) correspondant aux départements de l'entreprise, avec une protection active contre la suppression accidentelle. Des comptes utilisateurs standardisés (convention de nommage stricte) ont été créés, intégrant une politique de sécurité forçant le renouvellement du mot de passe dès la première connexion.
+
+4. **Recette technique et tests d'intégration :** 
+   Une validation exhaustive de l'infrastructure a été menée. Les flux réseaux ont été testés (routage local, NAT, accès WAN). La santé de l'Active Directory a été auditée via des diagnostics natifs vérifiant l'intégrité de la base NTDS et la connectivité. Enfin, la résolution DNS interne et le processus d'intégration d'un poste client au domaine ont été validés avec succès.
+</Steps>
+
+## ✅ Résultats
+
+:::tip[Statut de l'intervention]
+**Succès :** L'infrastructure d'identité et de résolution est opérationnelle et validée en production.
+* La VM Windows Server est stable sur l'hyperviseur Nutanix avec une connectivité réseau conforme.
+* L'annuaire Active Directory est déployé, structuré par services (UOs), et accepte les connexions des utilisateurs avec des habilitations sécurisées.
+* Le service DNS fait autorité sur la zone locale et sa récursivité est verrouillée contre les menaces externes.
+* Les tests de diagnostic du contrôleur de domaine n'affichent aucune erreur critique.
+:::
+
+Sur le plan technique, l'avertissement classique de délégation DNS lors de la promotion du domaine racine a été correctement identifié comme un comportement normal et ignoré en toute sécurité. De plus, l'intégration manuelle des pilotes VirtIO s'est avérée indispensable dès la phase de post-installation pour garantir les performances I/O sur l'hyperviseur Nutanix.
+
+## 🎓 Compétences BTS SIO (Épreuve E4) mobilisées
+
+Cette intervention technique a permis de mettre en pratique et de valider les compétences suivantes :
+
+| Compétence globale | Sous-compétence | Actions menées lors de la mission |
+| :--- | :--- | :--- |
+| **1.5 Mettre à disposition un service** | **Déployer un service** | Création de la VM sur Nutanix, configuration réseau (IP statique, VLAN), et installation suivie de la promotion du serveur en contrôleur de domaine (rôles AD DS et DNS). |
+| **1.1 Gérer le patrimoine informatique** | **Mettre en place les habilitations** | Création de l'arborescence Active Directory (Unités d'Organisation), provisionnement des utilisateurs selon une nomenclature stricte et application d'une politique de mots de passe forcée à la première connexion. |
+| **1.1 Gérer le patrimoine informatique** | **Exploiter des référentiels, normes et standards** | Application des bonnes pratiques DevSecOps et d'administration système : désactivation de la récursivité DNS pour sécuriser le serveur, nommage standardisé du serveur (MN01), et sécurisation du compte Administrateur local. |
+| **1.5 Mettre à disposition un service** | **Réaliser les tests d’intégration** | Exécution d'un plan de recette structuré : validation des flux réseau (ICMP, NAT), tests de santé du domaine (outil dcdiag), vérification de la résolution DNS (nslookup) et test d'intégration d'un poste client. |

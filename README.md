@@ -1,25 +1,12 @@
-# Template `README.md` pour les dépôts d’infrastructure
+# Développement - Loutik Docs
 
-## Prompt IA
-
-Tu es un ingénieur SRE senior garant du respect des bonnes pratiques de l’industrie. Ta mission est de rédiger le fichier README.md du projet en restant concis, clair et professionnel dans tes explications pour un dépôt de développement (application, bot, API...).
-
-Ci-dessous se trouve un template Markdown du README.md. Les commentaires entre crochets [] sont des instructions destinées à ton persona et ne doivent jamais apparaître dans le résultat final.
-
-Ta réponse doit contenir uniquement le résultat final, sans texte supplémentaire ni explication.
-
-Informations à prendre en compte :
-
-* [INSÉRER LES INFORMATIONS]
-
-````markdown
-# Développement - <nom>
-
-![Bannière Loutik](https://raw.githubusercontent.com/loutik/design-assets/main/banniere_loutik.png)
+![Bannière Loutik](https://raw.githubusercontent.com/loutik/design-assets/main/loutikdocs/banniere_loutikdocs.png)
 
 ## Contexte
 
-[Présenter le contexte du dépôt, les objectifs du projet ainsi que l'objectif de l'outil développer.]
+Ce dépôt contient le site de documentation Loutik, conçu pour partager mon infrastructure homelab, les composants techniques mis en place, les notions apprises au fil de mes expériences, ainsi que les projets réalisés dans le cadre du BTS SIO.
+
+L’objectif est de centraliser la documentation technique sous une interface claire et facilement navigable, afin de présenter les architectures, les choix de conception, les bonnes pratiques et les retours d’expérience liés au système d’information et à l’automatisation.
 
 ---
 
@@ -28,44 +15,99 @@ Informations à prendre en compte :
 L’organisation du dépôt suit la logique suivante :
 
 ```text
-[Génération de l’arborescence du projet avec les dossiers et fichiers importants]
+.
+├── public/                     # Fichiers statiques servis par le site
+├── src/
+│   ├── assets/                # Ressources visuelles et médias
+│   ├── components/            # Composants Astro réutilisables
+│   ├── content/
+│   │   ├── docs/              # Contenu documentaire du site
+│   │   └── config.ts         # Configuration des collections de contenu
+│   └── ...
+├── templates/                 # Modèles de rédaction pour les contenus
+├── .github/                   # Configuration GitHub et workflows
+├── astro.config.mjs           # Configuration principal du projet Astro
+├── docker-compose.yml         # Services Docker du projet
+├── Dockerfile                 # Image de conteneur du site
+├── nginx.conf                 # Configuration NGINX pour la publication
+├── package.json               # Dépendances et scripts npm
+├── package-lock.json          # Verrouillage des dépendances
+├── tsconfig.json              # Configuration TypeScript
+├── README.md                  # Documentation du dépôt
+├── README-astro.md            # Documentation Astro de référence
+├── LICENSE.md                 # Licence du projet
+└── public/                    # Fichiers publics du site
 ```
 
-- **`[<chemin>/]`** : [Description de l’utilité du dossier]
-- **`[<chemin>/<nom.extension>]`** : [Description de l’utilité du fichier]
+- **`src/content/docs/`** : Contient la documentation, les articles, les pages et les ressources associées au site.
+- **`src/components/`** : Regroupe les composants Astro utilisés pour la structure et le design du site.
+- **`public/`** : Contient les assets statiques exposés directement par le serveur web.
+- **`templates/`** : Fournit des modèles pour la rédaction de nouveaux contenus et de pages structurées.
+- **`astro.config.mjs`** : Paramètre le moteur Astro ainsi que ses intégrations et plugins.
+- **`package.json`** : Déclare les scripts et les dépendances du projet.
 
 ---
 
-## Utilisation de [nom]
+## Utilisation du projet
 
 ### 1. Cloner le dépôt localement
 
 ```bash
-git clone [URL du dépôt]
-cd [Nom du dépôt]
+git clone https://github.com/loutik/website-docs.git
+cd loutik_website-docs
 ```
 
-### 2. [Action à réaliser]
-
-[Description de l’action]
+### 2. Installer les dépendances
 
 ```bash
-[Exemple de commande]
+npm install
 ```
 
-### 3. [Action suivante]
+### 3. Lancer le site en mode développement
 
-[Ajouter autant d’étapes que nécessaire]
+```bash
+npm run dev
+```
+
+Le site est ensuite accessible par défaut sur l’URL suivante :
+
+```text
+http://localhost:4321
+```
+
+### 4. Vérifier le rendu du projet
+
+Pour générer la version de production et valider le site avant publication :
+
+```bash
+npm run build
+npm run preview
+```
+
+Cette commande permet de vérifier le rendu final produit par Astro avant un déploiement ou une publication.
+
+### 5. Publier des modifications via une branche et une pull request
+
+```bash
+git checkout -b feature/mon-correctif
+git add .
+git commit -m "Ajout de la documentation ou correction"
+git push -u origin feature/mon-correctif
+```
+
+Ensuite, ouvrez une pull request sur GitHub pour valider les changements, demander une revue et fusionner la branche dans la branche principale lorsqu’elle est prête.
 
 ---
 
 ## Bonnes pratiques
 
-1. **[Nom de la bonne pratique]** : [Description]
-2. **[Nom de la bonne pratique]** : [Description]
+1. **Valider le build avant merge** : Exécuter `npm run build` pour s’assurer que le site compile correctement et que les pages sont générées sans erreur.
+2. **Conserver une structure documentaire claire** : Organiser les pages par thématiques de manière cohérente (homelab, notions, projets, blog, etc.).
+3. **Séparer contenu et composants** : Conserver les fichiers de contenu dans `src/content/docs/` et les éléments réutilisables dans `src/components/`.
+4. **Optimiser les assets** : Utiliser les ressources statiques et les images dans des dossiers dédiés pour éviter la confusion et faciliter la maintenance.
 
 ```bash
-[Commande à exécuter si nécessaire]
+npm run build
 ```
 
 ---
@@ -78,6 +120,5 @@ cd [Nom du dépôt]
 
 <div align="center">
 <br>
-<small><i>Dernière mise à jour : [jour mois année — Exemple : 15 avril 2026]</i></small>
+<small><i>Dernière mise à jour : 16 août 2026</i></small>
 </div>
-````
