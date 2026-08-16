@@ -8,4 +8,4 @@ RUN touch /var/run/nginx.pid && \
 
 USER 101
 
-EXPOSE 8080
+EXPOSE 80

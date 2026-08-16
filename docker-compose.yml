@@ -8,24 +8,24 @@ services:
   #   image: nginx:1.31.3-alpine-slim
   #   container_name: dev-loutikdocs
   #   ports:
-  #     - 8080:80
+  #     - 80:80
   #   volumes:
-  #     - ./dist:/usr/share/nginx/html
+  #    - ./dist:/usr/share/nginx/html
 
   # ==================================
   # Dev view
   # ==================================
-  # nginx:
-  #   image: dev-loutikdocs:1.0.3
-  #   container_name: dev-loutikdocs
-  #   ports:
-  #     - 8080:8080
+  nginx:
+    image: dev-loutikdocs:1.0.8
+    container_name: dev-loutikdocs
+    ports:
+      - 8080:80
 
   # ===================================
   # Prod view
   # ===================================
-  nginx:
-    image: ghcr.io/loutik/website-docs:latest
-    container_name: prd-loutikdocs
-    ports:
-      - 8080:8080
+  # nginx:
+  #   image: ghcr.io/loutik/website-docs:latest
+  #   container_name: prd-loutikdocs
+  #   ports:
+  #     - 8080:8080
