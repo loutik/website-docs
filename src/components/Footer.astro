@@ -1,4 +1,5 @@
 ---
+// Footer
 import Default from '@astrojs/starlight/components/Footer.astro';
 ---
 
@@ -38,8 +39,17 @@ import Default from '@astrojs/starlight/components/Footer.astro';
 
 <!-- CSS custom -->
 <style is:global>
+
+  body {
+    overflow-x: hidden;
+  }
+
   header.header {
     z-index: 10000 !important;
+  }
+
+  nav.sidebar {
+    z-index: 10001 !important;
   }
 
   /* Élévation du contenu pour que le footer passe au-dessus de la sidebar latérale */
