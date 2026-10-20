@@ -35,7 +35,7 @@ Le trafic réseau a été restauré instantanément grâce à une relance manuel
 
 **Figure 1 - fichier de configuration override.conf de NGINX :**
 
-```conf
+```ini
 [Service]
 Restart=on-failure
 RestartSec=5s
