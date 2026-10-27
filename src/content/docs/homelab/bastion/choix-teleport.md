@@ -2,7 +2,7 @@
 title: "Choix - Teleport"
 description: "Explication et justification du choix technique de Teleport au sein de LoutikCLOUD."
 sidebar:
-order: 1
+    order: 2
 ---
 
 ## A. Contexte
