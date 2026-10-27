@@ -16,7 +16,7 @@ services:
   # Dev view
   # ==================================
   nginx:
-    image: dev-loutikdocs:1.0.8
+    build: .
     container_name: dev-loutikdocs
     ports:
       - 8080:80
